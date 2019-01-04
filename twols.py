@@ -15,6 +15,20 @@ with open('/usr/share/dict/american-english') as fin:
         if "'" not in s)
 
 
+def trace(f):
+    @wraps(f)
+    def inner(*args, **kwargs):
+        indent = ' ' * trace.level
+        print(indent, "{}(*{}, **{})".format(f.__name__, args, kwargs))
+        trace.level += 1
+        output = f(*args, **kwargs)
+        trace.level -= 1
+        print(indent, f.__name__, ":", repr(output))
+        return output
+    return inner
+trace.level = 0
+
+
 class _Time(object):
 
     def __init__(self):
